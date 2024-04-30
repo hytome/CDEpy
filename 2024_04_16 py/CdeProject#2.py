@@ -1,30 +1,30 @@
-
-
-    # 0과 1로 이루어진 10의 7승 크기의 배열 생성
+import numpy as np
 
 if __name__ == "__main__":
-    import numpy as np
-    size=10**4
-    #나중에 7로 수정하기.
-    data= [np.random.randint(0,2,)for i in range(size)]
-    
-    print("data")
-    print(data[:30])
-    print()
-    x = [0 if value == 0 else 5 for value in data]
-    
-    print("x")
-    print(x[:30])
-    print()
-    noise = [round(np.random.rand(), 4) for _ in range(size)] # 소수점 4자리까지 반올림
-    print("noise")
-    print(noise[:30])
-    #노이즈 생성.
-    r = [x_val + noise_val for x_val, noise_val in zip(x, noise)]
-    
-    print("r")
-    print(r[:30])
-    y = [1 if value > 2.5 else 0 for value in r]
-    
-    
-    
+    size = 10**7  # 데이터 포인트 수
+    data = [np.random.randint(0, 2) for i in range(size)]
+    x = [0 if value == 0 else 5 for value in data]  # 기본 신호
+
+    num_paths = 3  # 다이버시티 경로 수 (예: 3개의 안테나)
+    scale = 1  # 레일리 분포의 스케일 파라미터
+    combined_signal = np.zeros(size)
+
+    for _ in range(num_paths):
+        rayleigh_fading = np.random.rayleigh(scale, size)
+        path_signal = x + rayleigh_fading  # 각 경로의 신호
+        combined_signal += path_signal  # 신호 결합
+
+    combined_signal /= num_paths  # 평균을 취하여 결합
+
+    # 잡음 추가
+    noise = np.random.normal(0, 1, size)
+    r = combined_signal + noise
+
+    # 복조
+    y = [1 if value >= 2.5 else 0 for value in r]
+
+    # 성능 체크
+    check = [1 if data[i] == y[i] else 0 for i in range(size)]
+    correct_bits = sum(check)
+    error_rate = (size - correct_bits) / size
+    print(f"에러 확률: {error_rate}")
