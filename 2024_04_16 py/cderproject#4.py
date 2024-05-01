@@ -12,13 +12,9 @@ def transmit(data, noise_std):
 def print_arrays(data, x, n, r, y):
     """ 배열 출력 """
     print("data의 배열 (첫 30개):", data[:30])
-    print()
     print("배열 x의 값 (첫 30개):", x[:30])
-    print()
     print("배열 n의 값 (첫 30개, 소수점 4자리):", np.round(n[:30], 4))
-    print()
     print("배열 r의 값 (첫 30개, 소수점 4자리):", np.round(r[:30], 4))
-    print()
     print("배열 y의 값 (첫 30개):", y[:30])
 
 def receive(data, transmitted_data):
@@ -58,12 +54,3 @@ error_bits = len(data) - correct_bits
 error_probability = error_bits / len(data)
 print("수신기가 바르게 복원한 비트의 개수:", correct_bits)
 print("수신기의 에러 확률 (ρ):", error_probability)
-
-#0.1 씩 잡음 표준 편차 확인.
-noise_stds = np.arange(0, 3, 0.1)
-for noise_std in noise_stds:
-    final_data, total_retries = automatic_repeat_request(data, noise_std=noise_std)
-    correct_bits = sum(1 for i in range(len(data)) if data[i] == final_data[i])
-    error_bits = len(data) - correct_bits
-    error_probability = error_bits / len(data)
-    print(f"잡음 표준 편차: {noise_std:.1f}, 에러 확률: {error_probability:.6f}, 총 재전송 횟수: {total_retries}")
